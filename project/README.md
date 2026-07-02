@@ -92,10 +92,32 @@ R2_PUBLIC_URL=https://pub-<hash>.r2.dev
 
 ## Deployment
 
-- **Frontend:** Netlify — build command `npm run build`, publish `dist/`, set `VITE_API_URL`
-- **Backend:** Railway — set all server env vars, start command `npm start`
-- **Database:** MongoDB Atlas
-- **Storage:** Cloudflare R2
+### Frontend (Netlify)
+
+1. Connect repo and set **Base directory** to `client` (or `project/client` depending on repo root)
+2. **Build command:** `npm run build`
+3. **Publish directory:** `dist`
+4. **Environment variable** (required at build time):
+   ```
+   VITE_API_URL=https://your-backend.railway.app/api
+   ```
+5. Trigger a new deploy after saving env vars (Vite bakes `VITE_*` into the build)
+
+Do **not** publish the `client` source folder directly — only `client/dist` after `npm run build`.
+
+`netlify.toml`, `_redirects`, and `_headers` in `client/` ensure JS/CSS are served with correct MIME types.
+
+### Backend (Railway)
+
+Set all server env vars, start command `npm start`, and set `API_PUBLIC_URL` to your Railway URL.
+
+### Database
+
+MongoDB Atlas
+
+### Storage
+
+Supabase Storage
 
 ## License
 
