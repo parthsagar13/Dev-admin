@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#f3f4f6"/>
+  <rect x="480" y="260" width="320" height="200" rx="12" fill="#e5e7eb"/>
+  <path d="M560 400 L640 320 L720 400 L680 400 L680 440 L600 440 L600 400 Z" fill="#9ca3af"/>
+  <text x="640" y="500" text-anchor="middle" font-family="system-ui,sans-serif" font-size="24" fill="#6b7280">Template Preview</text>
+</svg>
