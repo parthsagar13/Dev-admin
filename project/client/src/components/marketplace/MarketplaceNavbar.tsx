@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, User, Code2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/AuthContext';
+import { marketplaceContainer } from '@/lib/layout';
 import { cn } from '@/lib/utils';
 
 interface MarketplaceNavbarProps {
@@ -36,7 +37,7 @@ export const MarketplaceNavbar = ({
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
+      <div className={cn(marketplaceContainer, 'flex h-16 items-center gap-6')}>
         <Link to="/" className="flex shrink-0 items-center gap-2">
           <Code2 className="h-7 w-7 text-blue-600" />
           <span className="text-lg font-bold tracking-tight">Code Market AI</span>

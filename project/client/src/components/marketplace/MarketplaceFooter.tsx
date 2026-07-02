@@ -1,5 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Code2, Globe } from 'lucide-react';
+import { marketplaceContainer } from '@/lib/layout';
+import { cn } from '@/lib/utils';
 
 const footerLinks = {
   marketplace: [
@@ -23,7 +25,7 @@ const footerLinks = {
 
 export const MarketplaceFooter = () => (
   <footer className="border-t border-gray-100 bg-gray-50">
-    <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+    <div className={cn(marketplaceContainer, 'py-14')}>
       <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <div className="mb-4 flex items-center gap-2">

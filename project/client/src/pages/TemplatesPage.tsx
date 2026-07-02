@@ -23,6 +23,7 @@ import {
   getUniqueCategories,
   type TemplateFilters,
 } from '@/hooks/useFilteredTemplates';
+import { marketplaceContainer, templateGridSidebarClass } from '@/lib/layout';
 import { cn } from '@/lib/utils';
 
 const PAGE_SIZE = 9;
@@ -55,7 +56,7 @@ export const TemplatesPage = () => {
         onSearchChange={(q) => setFilters((prev) => ({ ...prev, query: q }))}
       />
 
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className={cn(marketplaceContainer, 'py-8')}>
         <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
           <FilterSidebar
             filters={filters}
@@ -121,15 +122,14 @@ export const TemplatesPage = () => {
             </div>
 
             {loading ? (
-              <TemplateGridSkeleton />
+              <TemplateGridSkeleton sidebar />
             ) : paginated.length === 0 ? (
               <EmptyState onAction={() => setFilters(defaultFilters)} actionLabel="Reset Filters" />
             ) : (
               <>
                 <div
                   className={cn(
-                    'gap-6',
-                    view === 'grid' ? 'grid sm:grid-cols-2 xl:grid-cols-3' : 'flex flex-col'
+                    view === 'grid' ? templateGridSidebarClass : 'flex flex-col gap-4'
                   )}
                 >
                   {paginated.map((t) => (

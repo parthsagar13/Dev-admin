@@ -22,6 +22,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { marketplaceContainer, templateGridClass } from '@/lib/layout';
+import { cn } from '@/lib/utils';
 
 const techStack = ['React', 'Next.js', 'Vue.js', 'Angular', 'Tailwind', 'Node.js'];
 
@@ -124,7 +126,7 @@ export const LandingPage = () => {
 
       {/* Featured */}
       <section className="py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className={marketplaceContainer}>
           <div className="mb-10 flex items-center justify-between">
             <h2 className="text-2xl font-bold text-gray-900">Featured Templates</h2>
             <Link to="/templates" className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:underline">
@@ -134,7 +136,7 @@ export const LandingPage = () => {
           {loading ? (
             <TemplateGridSkeleton count={6} />
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className={templateGridClass}>
               {featured.map((t) => (
                 <TemplateMarketCard key={t._id} template={t} />
               ))}
@@ -146,7 +148,7 @@ export const LandingPage = () => {
       {/* Trending */}
       {trending.length > 0 && (
         <section className="border-y border-gray-100 bg-gray-50/50 py-16">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className={marketplaceContainer}>
             <h2 className="mb-8 flex items-center gap-2 text-2xl font-bold text-gray-900">
               <TrendingUp className="h-6 w-6 text-red-500" />
               Trending This Week
@@ -162,7 +164,7 @@ export const LandingPage = () => {
 
       {/* Dark feature */}
       <section className="bg-gray-950 py-20 text-white">
-        <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+        <div className={cn(marketplaceContainer, 'grid items-center gap-12 lg:grid-cols-2')}>
           <div>
             <h2 className="text-3xl font-bold sm:text-4xl">Engineered for Modern Teams</h2>
             <p className="mt-4 text-gray-400">
@@ -195,7 +197,7 @@ export const LandingPage = () => {
 
       {/* Recent + Free */}
       <section className="py-16">
-        <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+        <div className={cn(marketplaceContainer, 'grid gap-10 lg:grid-cols-2')}>
           <div>
             <h3 className="mb-6 text-xl font-bold">Recently Added</h3>
             <div className="space-y-3">
