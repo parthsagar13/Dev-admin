@@ -42,6 +42,7 @@ const processPreviewDir = async (extractDir, slug, sourceBuffer, customThumbnail
   const previewImagePath = await findPreviewImage(extractDir);
 
   const sourceZipUrl = await storageService.uploadZip(slug, sourceBuffer);
+  const zipPath = `source/${slug}.zip`;
   await storageService.uploadPreview(slug, extractDir);
 
   const previewUrl = buildPreviewUrl(slug);
@@ -60,7 +61,7 @@ const processPreviewDir = async (extractDir, slug, sourceBuffer, customThumbnail
     thumbnailUrl = await storageService.uploadDefaultThumbnail(slug);
   }
 
-  return { sourceZipUrl, previewUrl, previewIndexPath, thumbnailUrl };
+  return { sourceZipUrl, zipPath, previewUrl, previewIndexPath, thumbnailUrl };
 };
 
 export const processTemplateUpload = async (sourceBuffer, previewInput, slug, customThumbnail) => {

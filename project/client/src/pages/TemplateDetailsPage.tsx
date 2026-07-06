@@ -17,14 +17,16 @@ import { TemplateMarketCard } from '@/components/marketplace/TemplateMarketCard'
 import { TemplateGridSkeleton } from '@/components/marketplace/TemplateSkeleton';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { templateApi } from '@/services/api';
+import { templateApi, paymentApi } from '@/services/api';
 import { useTemplateDownload } from '@/hooks/useTemplateDownload';
+import { useUserAuth } from '@/context/UserAuthContext';
 import { formatDownloads, formatPrice } from '@/lib/format';
 import type { Template } from '@/types';
 
 export const TemplateDetailsPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { isAuthenticated } = useUserAuth();
   const { download, isDownloading } = useTemplateDownload();
   const [template, setTemplate] = useState<Template | null>(null);
   const [related, setRelated] = useState<Template[]>([]);
@@ -48,10 +50,35 @@ export const TemplateDetailsPage = () => {
 
   const handleBuy = () => {
     if (!template) return;
+    if (!isAuthenticated) {
+      toast.error('Please login to continue');
+      navigate(`/login?redirect=/templates/${template.slug}`);
+      return;
+    }
     if (template.isFree) {
-      download(template._id, template.slug);
+      paymentApi
+        .createOrder(template._id)
+        .then(() => download(template._id, template.slug))
+        .catch((err) => toast.error(err.message));
     } else {
       navigate(`/checkout/${template.slug}`);
+    }
+  };
+
+  const handleFreeDownload = async () => {
+    if (!template) return;
+    if (!isAuthenticated) {
+      toast.error('Please login to download');
+      navigate(`/login?redirect=/templates/${template.slug}`);
+      return;
+    }
+    try {
+      if (template.isFree) {
+        await paymentApi.createOrder(template._id);
+      }
+      await download(template._id, template.slug);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Download failed');
     }
   };
 
@@ -205,11 +232,11 @@ export const TemplateDetailsPage = () => {
                 <Button
                   variant="outline"
                   className="h-12 w-full text-base"
-                  onClick={() => download(template._id, template.slug)}
+                  onClick={handleFreeDownload}
                   disabled={isDownloading(template._id)}
                 >
                   <ShoppingCart className="mr-2 h-4 w-4" />
-                  {isDownloading(template._id) ? 'Downloading...' : 'Add to Cart & Download'}
+                  {isDownloading(template._id) ? 'Downloading...' : template.isFree ? 'Download Free' : 'Download (if purchased)'}
                 </Button>
                 <Button asChild variant="outline" className="h-12 w-full text-base">
                   <Link to={`/preview/${template.slug}`}>

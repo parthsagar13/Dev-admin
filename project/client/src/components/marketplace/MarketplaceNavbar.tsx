@@ -2,6 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Search, ShoppingCart, User, Code2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/AuthContext';
+import { useUserAuth } from '@/context/UserAuthContext';
 import { marketplaceContainer } from '@/lib/layout';
 import { cn } from '@/lib/utils';
 
@@ -24,7 +25,8 @@ export const MarketplaceNavbar = ({
 }: MarketplaceNavbarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated: isAdmin } = useAuth();
+  const { isAuthenticated: isUser } = useUserAuth();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,11 +84,20 @@ export const MarketplaceNavbar = ({
             <ShoppingCart className="h-5 w-5" />
           </Link>
           <Link
-            to={isAuthenticated ? '/admin/dashboard' : '/admin/login'}
+            to={isUser ? '/dashboard' : '/login'}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200"
+            title={isUser ? 'My Dashboard' : 'Login'}
           >
             <User className="h-5 w-5" />
           </Link>
+          {isAdmin && (
+            <Link
+              to="/admin/dashboard"
+              className="hidden text-xs text-gray-500 hover:text-gray-900 sm:block"
+            >
+              Admin
+            </Link>
+          )}
         </div>
       </div>
     </header>

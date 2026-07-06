@@ -7,6 +7,12 @@ import { connectDB } from './config/db.js';
 import { seedDefaultAdmin } from './utils/seedAdmin.js';
 import authRoutes from './routes/authRoutes.js';
 import templateRoutes from './routes/templateRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
+import downloadRoutes from './routes/downloadRoutes.js';
+import downloadsRoutes from './routes/downloadsRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
+import { handleWebhook } from './controllers/paymentController.js';
 import { servePreview } from './controllers/previewController.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 
@@ -19,6 +25,22 @@ app.use(helmet({
 }));
 app.use(cors());
 app.use(morgan('dev'));
+
+app.post(
+  '/api/payment/webhook',
+  express.raw({ type: 'application/json' }),
+  (req, _res, next) => {
+    req.rawBody = req.body;
+    try {
+      req.body = JSON.parse(req.body.toString());
+    } catch {
+      req.body = {};
+    }
+    next();
+  },
+  handleWebhook
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -27,6 +49,11 @@ app.get('/api/health', (_req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/payment', paymentRoutes);
+app.use('/api/download', downloadRoutes);
+app.use('/api/downloads', downloadsRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/admin', adminRoutes);
 app.get(/^\/api\/preview\/([^/]+)(?:\/(.*))?$/, servePreview);
 app.use('/api/templates', templateRoutes);
 

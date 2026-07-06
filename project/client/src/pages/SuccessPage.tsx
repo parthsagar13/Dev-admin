@@ -50,9 +50,9 @@ export const SuccessPage = () => {
               Continue Browsing
             </Link>
             <span className="text-gray-300">|</span>
-            <Link to="/dashboard" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
+            <Link to="/dashboard/downloads" className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
               <LayoutGrid className="h-4 w-4" />
-              Go to Dashboard
+              My Downloads
             </Link>
           </div>
 

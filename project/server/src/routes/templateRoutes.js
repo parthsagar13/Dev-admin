@@ -8,17 +8,17 @@ import {
   downloadTemplate,
   getDashboardStats,
 } from '../controllers/templateController.js';
-import { authMiddleware } from '../middlewares/auth.js';
+import { adminAuthMiddleware } from '../middlewares/auth.js';
 import { uploadTemplateFiles } from '../middlewares/upload.js';
 
 const router = Router();
 
 router.get('/', getTemplates);
-router.get('/dashboard/stats', authMiddleware, getDashboardStats);
+router.get('/dashboard/stats', adminAuthMiddleware, getDashboardStats);
 router.get('/download/:id', downloadTemplate);
 router.get('/:slug', getTemplateBySlug);
-router.post('/upload', authMiddleware, uploadTemplateFiles, uploadTemplate);
-router.patch('/:id', authMiddleware, updateTemplate);
-router.delete('/:id', authMiddleware, deleteTemplate);
+router.post('/upload', adminAuthMiddleware, uploadTemplateFiles, uploadTemplate);
+router.patch('/:id', adminAuthMiddleware, updateTemplate);
+router.delete('/:id', adminAuthMiddleware, deleteTemplate);
 
 export default router;

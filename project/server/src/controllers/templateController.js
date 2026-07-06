@@ -66,7 +66,7 @@ export const uploadTemplate = async (req, res, next) => {
       ? { buffer: thumbnailFile.buffer, mimeType: thumbnailFile.mimetype }
       : null;
 
-    const { sourceZipUrl, previewUrl, previewIndexPath, thumbnailUrl } = await processTemplateUpload(
+    const { sourceZipUrl, previewUrl, previewIndexPath, thumbnailUrl, zipPath } = await processTemplateUpload(
       sourceZip.buffer,
       previewInput,
       slug,
@@ -81,6 +81,7 @@ export const uploadTemplate = async (req, res, next) => {
       price: free ? 0 : parsedPrice,
       isFree: free,
       thumbnailUrl,
+      zipPath,
       sourceZipUrl,
       previewUrl,
       previewIndexPath,
@@ -136,25 +137,10 @@ export const deleteTemplate = async (req, res, next) => {
   }
 };
 
-export const downloadTemplate = async (req, res, next) => {
-  try {
-    const template = await Template.findByIdAndUpdate(
-      req.params.id,
-      { $inc: { downloads: 1 } },
-      { new: true }
-    );
-
-    if (!template) {
-      return res.status(404).json({ message: 'Template not found' });
-    }
-
-    res.json({
-      downloadUrl: template.sourceZipUrl,
-      downloads: template.downloads,
-    });
-  } catch (err) {
-    next(err);
-  }
+export const downloadTemplate = async (_req, res) => {
+  res.status(403).json({
+    message: 'Direct download is disabled. Please login and use /api/download/:templateId',
+  });
 };
 
 export const getDashboardStats = async (_req, res, next) => {

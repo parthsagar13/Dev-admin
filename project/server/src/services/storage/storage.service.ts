@@ -43,6 +43,19 @@ class StorageService {
     return data.publicUrl;
   }
 
+  async createSignedUrl(storagePath: string, expiresInSeconds = 600): Promise<string> {
+    const objectPath = this.sanitizePath(storagePath);
+    const { data, error } = await this.client.storage
+      .from(this.bucket)
+      .createSignedUrl(objectPath, expiresInSeconds);
+
+    if (error || !data?.signedUrl) {
+      throw new Error(`Failed to generate signed URL: ${error?.message || 'unknown error'}`);
+    }
+
+    return data.signedUrl;
+  }
+
   private async uploadOnce(storagePath: string, buffer: Buffer, contentType: string): Promise<void> {
     const objectPath = this.sanitizePath(storagePath);
     const { error } = await this.client.storage.from(this.bucket).upload(objectPath, buffer, {

@@ -1,35 +1,100 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Lock, CreditCard, ArrowLeft } from 'lucide-react';
+import { Lock, ArrowLeft, Loader2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { MarketplaceFooter } from '@/components/marketplace/MarketplaceFooter';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { templateApi } from '@/services/api';
+import { templateApi, paymentApi } from '@/services/api';
+import { useUserAuth } from '@/context/UserAuthContext';
+import { loadRazorpayScript } from '@/lib/razorpay';
 import { formatPrice } from '@/lib/format';
 import type { Template } from '@/types';
 
 export const CheckoutPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { user, isAuthenticated } = useUserAuth();
   const [template, setTemplate] = useState<Template | null>(null);
+  const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      toast.error('Please login to purchase');
+      navigate(`/login?redirect=/checkout/${slug || ''}`);
+      return;
+    }
     if (!slug) return;
     templateApi.getBySlug(slug).then(setTemplate).catch(() => setTemplate(null));
-  }, [slug]);
+  }, [slug, isAuthenticated, navigate]);
 
-  const handleComplete = () => {
-    navigate(`/success${slug ? `?slug=${slug}` : ''}`);
+  const handlePay = async () => {
+    if (!template || !user) return;
+
+    try {
+      setProcessing(true);
+      const orderData = await paymentApi.createOrder(template._id);
+
+      if (orderData.free) {
+        toast.success('Free template claimed!');
+        navigate(`/success?slug=${template.slug}`);
+        return;
+      }
+
+      if (!orderData.keyId || !orderData.orderId || !orderData.dbOrderId) {
+        throw new Error('Failed to create payment order');
+      }
+
+      await loadRazorpayScript();
+
+      const options = {
+        key: orderData.keyId,
+        amount: Math.round((orderData.amount || 0) * 100),
+        currency: orderData.currency || 'INR',
+        name: 'Code Market AI',
+        description: template.title,
+        order_id: orderData.orderId,
+        prefill: { name: user.name, email: user.email },
+        theme: { color: '#111827' },
+        handler: async (response: {
+          razorpay_order_id: string;
+          razorpay_payment_id: string;
+          razorpay_signature: string;
+        }) => {
+          try {
+            const result = await paymentApi.verify({
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+              dbOrderId: orderData.dbOrderId!,
+            });
+            toast.success('Payment successful!');
+            const resultSlug = (result as { template?: { slug: string } }).template?.slug || template.slug;
+            navigate(`/success?slug=${resultSlug}`);
+          } catch (err) {
+            toast.error(err instanceof Error ? err.message : 'Payment verification failed');
+            navigate('/payment-failed');
+          }
+        },
+        modal: {
+          ondismiss: () => setProcessing(false),
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', () => {
+        toast.error('Payment failed');
+        navigate('/payment-failed');
+      });
+      rzp.open();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Checkout failed');
+    } finally {
+      setProcessing(false);
+    }
   };
+
+  if (!isAuthenticated) return null;
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -44,77 +109,24 @@ export const CheckoutPage = () => {
       </header>
 
       <div className="mx-auto max-w-6xl px-4 py-6">
-        <Link to="/templates" className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900">
+        <Link to={slug ? `/templates/${slug}` : '/templates'} className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900">
           <ArrowLeft className="h-4 w-4" />
-          Return to Marketplace
+          Back to Template
         </Link>
 
         <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_400px]">
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment Method</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-3 gap-3">
-                  {['Card', 'Pay', 'GitHub'].map((m, i) => (
-                    <button
-                      key={m}
-                      type="button"
-                      className={`rounded-xl border-2 p-4 text-center text-sm font-medium ${
-                        i === 0 ? 'border-blue-600 bg-blue-50' : 'border-gray-200'
-                      }`}
-                    >
-                      {m === 'Card' && <CreditCard className="mx-auto mb-2 h-5 w-5" />}
-                      {m}
-                    </button>
-                  ))}
-                </div>
-                <div className="space-y-2">
-                  <Label>Card Number</Label>
-                  <Input placeholder="0000 0000 0000 0000" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Expiry Date</Label>
-                    <Input placeholder="MM / YY" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>CVC</Label>
-                    <Input placeholder="123" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Billing Details</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label>Full Name</Label>
-                  <Input placeholder="Alex Sterling" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Email Address</Label>
-                  <Input type="email" placeholder="alex@company.com" />
-                </div>
-                <div className="space-y-2">
-                  <Label>Country</Label>
-                  <Select defaultValue="us">
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="us">United States</SelectItem>
-                      <SelectItem value="uk">United Kingdom</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Payment via Razorpay</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm text-gray-600">
+              <p>Click &quot;Pay Now&quot; to open the secure Razorpay checkout.</p>
+              <p>Supports UPI, cards, netbanking, and wallets.</p>
+              <p className="text-xs text-gray-400">
+                Logged in as {user?.email}
+              </p>
+            </CardContent>
+          </Card>
 
           <Card className="h-fit lg:sticky lg:top-8">
             <CardHeader>
@@ -131,7 +143,6 @@ export const CheckoutPage = () => {
                   <div>
                     <p className="font-semibold">{template.title}</p>
                     <p className="text-sm text-gray-500">{template.framework} Template</p>
-                    <p className="mt-1 text-sm text-amber-500">★ 4.9 (120 reviews)</p>
                   </div>
                 </div>
               )}
@@ -140,29 +151,25 @@ export const CheckoutPage = () => {
                   <span className="text-gray-500">Subtotal</span>
                   <span>{template ? formatPrice(template.price, template.isFree) : '—'}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-500">Tax (VAT 0%)</span>
-                  <span>$0.00</span>
-                </div>
                 <div className="flex justify-between border-t border-gray-100 pt-2 text-lg font-bold">
                   <span>Total</span>
                   <span>{template ? formatPrice(template.price, template.isFree) : '—'}</span>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <Input placeholder="FORGE20" className="flex-1" />
-                <Button variant="outline">Apply</Button>
-              </div>
               <Button
                 className="mt-4 h-12 w-full bg-gray-900 hover:bg-gray-800"
-                onClick={handleComplete}
+                onClick={handlePay}
+                disabled={!template || processing}
               >
-                <Lock className="mr-2 h-4 w-4" />
-                Complete Purchase
+                {processing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    <Lock className="mr-2 h-4 w-4" />
+                    Pay Now
+                  </>
+                )}
               </Button>
-              <p className="mt-3 text-center text-xs text-gray-400">
-                By completing your purchase, you agree to our Terms of Service.
-              </p>
             </CardContent>
           </Card>
         </div>

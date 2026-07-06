@@ -9,10 +9,12 @@ const templateSchema = new mongoose.Schema(
     price: { type: Number, required: true, min: 0, default: 0 },
     isFree: { type: Boolean, required: true, default: true },
     thumbnailUrl: { type: String, required: true },
+    zipPath: { type: String },
     sourceZipUrl: { type: String, required: true },
     previewUrl: { type: String, required: true },
     previewIndexPath: { type: String, required: true, default: 'index.html' },
     downloads: { type: Number, default: 0 },
+    purchaseCount: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

@@ -1,8 +1,12 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Code2 } from 'lucide-react';
+import toast from 'react-hot-toast';
+import { Code2, Loader2 } from 'lucide-react';
+import { authApi } from '@/services/api';
+import { useUserAuth } from '@/context/UserAuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -24,14 +28,29 @@ const schema = z
 type FormData = z.infer<typeof schema>;
 
 export const RegisterPage = () => {
+  const navigate = useNavigate();
+  const { login } = useUserAuth();
+  const [loading, setLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  const onSubmit = () => {
-    // UI placeholder — no registration API
+  const onSubmit = async (data: FormData) => {
+    try {
+      setLoading(true);
+      const response = await authApi.register(data.name, data.email, data.password);
+      if (!response.user) throw new Error('Registration failed');
+      login(response.token, response.user);
+      toast.success('Account created!');
+      navigate('/dashboard');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Registration failed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -67,18 +86,15 @@ export const RegisterPage = () => {
                 <Input id="confirm" type="password" {...register('confirm')} />
                 {errors.confirm && <p className="text-sm text-red-500">{errors.confirm.message}</p>}
               </div>
-              <Button type="submit" className="w-full bg-gray-900 hover:bg-gray-800">
-                Create Account
+              <Button type="submit" className="w-full bg-gray-900 hover:bg-gray-800" disabled={loading}>
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Create Account'}
               </Button>
             </form>
             <p className="mt-6 text-center text-sm text-gray-500">
               Already have an account?{' '}
-              <Link to="/admin/login" className="font-medium text-blue-600 hover:underline">
+              <Link to="/login" className="font-medium text-blue-600 hover:underline">
                 Sign in
               </Link>
-            </p>
-            <p className="mt-2 text-center text-xs text-gray-400">
-              Registration is a UI preview. Admin login is available.
             </p>
           </CardContent>
         </Card>

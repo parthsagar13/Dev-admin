@@ -1,5 +1,5 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, FileStack, LogOut, Code2 } from 'lucide-react';
+import { LayoutDashboard, FileStack, LogOut, Code2, ShoppingBag, CreditCard, Download, Users } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,10 @@ import { Button } from '@/components/ui/button';
 const navItems = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { label: 'Templates', href: '/admin/templates', icon: FileStack },
+  { label: 'Orders', href: '/admin/orders', icon: ShoppingBag },
+  { label: 'Payments', href: '/admin/payments', icon: CreditCard },
+  { label: 'Downloads', href: '/admin/downloads', icon: Download },
+  { label: 'Customers', href: '/admin/customers', icon: Users },
 ];
 
 export const AdminSidebar = () => {

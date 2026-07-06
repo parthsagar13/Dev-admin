@@ -1,9 +1,7 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, Download, Search } from 'lucide-react';
-import toast from 'react-hot-toast';
 import type { Template } from '@/types';
-import { templateApi } from '@/services/api';
+import { useTemplateDownload } from '@/hooks/useTemplateDownload';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,26 +12,9 @@ interface TemplateCardProps {
 }
 
 export const TemplateCard = ({ template }: TemplateCardProps) => {
-  const [downloading, setDownloading] = useState(false);
+  const { download, isDownloading } = useTemplateDownload();
 
-  const handleDownload = async () => {
-    try {
-      setDownloading(true);
-      const { downloadUrl } = await templateApi.download(template._id);
-      const link = document.createElement('a');
-      link.href = downloadUrl;
-      link.download = `${template.slug}.zip`;
-      link.target = '_blank';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      toast.success('Download started');
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Download failed');
-    } finally {
-      setDownloading(false);
-    }
-  };
+  const handleDownload = () => download(template._id, template.slug);
 
   return (
     <Card className="group overflow-hidden transition-shadow hover:shadow-md">
@@ -67,9 +48,9 @@ export const TemplateCard = ({ template }: TemplateCardProps) => {
               Preview
             </Link>
           </Button>
-          <Button className="flex-1" size="sm" onClick={handleDownload} disabled={downloading}>
+          <Button className="flex-1" size="sm" onClick={handleDownload} disabled={isDownloading(template._id)}>
             <Download className="h-4 w-4" />
-            {downloading ? '...' : 'Download'}
+            {isDownloading(template._id) ? '...' : 'Download'}
           </Button>
         </div>
       </CardContent>

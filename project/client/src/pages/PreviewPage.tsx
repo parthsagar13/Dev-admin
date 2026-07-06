@@ -4,6 +4,7 @@ import { ArrowLeft, Download, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { templateApi } from '@/services/api';
 import { getPreviewSrc } from '@/lib/preview';
+import { useTemplateDownload } from '@/hooks/useTemplateDownload';
 import type { Template } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +13,7 @@ export const PreviewPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const [template, setTemplate] = useState<Template | null>(null);
   const [loading, setLoading] = useState(true);
-  const [downloading, setDownloading] = useState(false);
+  const { download, isDownloading } = useTemplateDownload();
 
   useEffect(() => {
     if (!slug) return;
@@ -23,18 +24,9 @@ export const PreviewPage = () => {
       .finally(() => setLoading(false));
   }, [slug]);
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     if (!template) return;
-    try {
-      setDownloading(true);
-      const { downloadUrl } = await templateApi.download(template._id);
-      window.open(downloadUrl, '_blank');
-      toast.success('Download started');
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Download failed');
-    } finally {
-      setDownloading(false);
-    }
+    download(template._id, template.slug);
   };
 
   const previewSrc = slug ? getPreviewSrc(slug) : '';
@@ -89,9 +81,9 @@ export const PreviewPage = () => {
               Open
             </a>
           </Button>
-          <Button size="sm" className="bg-gray-900 hover:bg-gray-800" onClick={handleDownload} disabled={downloading}>
+          <Button size="sm" className="bg-gray-900 hover:bg-gray-800" onClick={handleDownload} disabled={template ? isDownloading(template._id) : false}>
             <Download className="h-4 w-4" />
-            {downloading ? 'Downloading...' : 'Download ZIP'}
+            {template && isDownloading(template._id) ? 'Downloading...' : 'Download ZIP'}
           </Button>
         </div>
       </header>
