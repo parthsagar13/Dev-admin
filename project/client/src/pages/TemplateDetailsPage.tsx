@@ -129,24 +129,14 @@ export const TemplateDetailsPage = () => {
               {template.framework}.
             </p>
 
-            <div className="mt-8 overflow-hidden rounded-2xl border border-gray-100 bg-gray-100 shadow-sm">
+            <div className="mt-8 overflow-hidden rounded-2xl border border-gray-100 bg-gray-50 shadow-sm">
               <img
                 src={template.thumbnailUrl}
                 alt={template.title}
-                className="aspect-video w-full object-cover"
+                className="aspect-video w-full bg-white object-contain"
               />
             </div>
-            <div className="mt-4 flex gap-3">
-              {[template.thumbnailUrl].map((src, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  className="h-16 w-24 overflow-hidden rounded-lg border-2 border-gray-900"
-                >
-                  <img src={src} alt="" className="h-full w-full object-cover" />
-                </button>
-              ))}
-            </div>
+            {/* thumbnail strip removed per requirement */}
 
             <Tabs defaultValue="description" className="mt-10">
               <TabsList>
@@ -211,7 +201,7 @@ export const TemplateDetailsPage = () => {
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-4xl font-bold text-gray-900">
-                    {formatPrice(template.price, template.isFree)}
+                    {formatPrice(template.price, template.isFree, template.currency || 'INR')}
                   </p>
                   <p className="text-sm text-gray-500">Commercial License</p>
                 </div>

@@ -69,7 +69,7 @@ export const createOrder = async (req, res, next) => {
     const receipt = generateReceipt(template._id);
     const razorpayOrder = await createRazorpayOrder({
       amount: template.price,
-      currency: 'INR',
+      currency: template.currency || 'INR',
       receipt,
       notes: {
         templateId: String(template._id),

@@ -17,7 +17,7 @@ export const TemplateMarketCard = ({
   className,
 }: TemplateMarketCardProps) => {
   const { download, isDownloading } = useTemplateDownload();
-  const priceLabel = formatPrice(template.price, template.isFree);
+  const priceLabel = formatPrice(template.price, template.isFree, template.currency || 'INR');
 
   if (variant === 'compact') {
     return (
@@ -28,11 +28,13 @@ export const TemplateMarketCard = ({
           className
         )}
       >
-        <img
-          src={template.thumbnailUrl}
-          alt={template.title}
-          className="h-16 w-24 shrink-0 rounded-lg object-cover"
-        />
+        <div className="h-16 w-24 shrink-0 overflow-hidden rounded-lg border border-gray-100 bg-gray-50">
+          <img
+            src={template.thumbnailUrl}
+            alt={template.title}
+            className="h-full w-full bg-white object-contain"
+          />
+        </div>
         <div className="min-w-0 flex-1">
           <p className="truncate font-semibold text-gray-900">{template.title}</p>
           <p className="text-sm text-gray-500">{template.framework}</p>
@@ -65,7 +67,7 @@ export const TemplateMarketCard = ({
         <img
           src={template.thumbnailUrl}
           alt={template.title}
-          className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.02]"
+          className="h-full w-full bg-white object-contain transition-transform duration-500 group-hover:scale-[1.01]"
           loading="lazy"
         />
         <span className="absolute bottom-3 left-3 rounded-md bg-white/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-gray-700 backdrop-blur">

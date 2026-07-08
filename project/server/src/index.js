@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import compression from 'compression';
 import { connectDB } from './config/db.js';
 import { seedDefaultAdmin } from './utils/seedAdmin.js';
 import authRoutes from './routes/authRoutes.js';
@@ -24,6 +25,7 @@ app.use(helmet({
   frameguard: false,
 }));
 app.use(cors());
+app.use(compression());
 app.use(morgan('dev'));
 
 app.post(

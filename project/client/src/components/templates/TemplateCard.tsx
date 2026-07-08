@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
+import { formatPrice } from '@/lib/format';
 
 interface TemplateCardProps {
   template: Template;
@@ -39,7 +40,7 @@ export const TemplateCard = ({ template }: TemplateCardProps) => {
           <span>{template.category}</span>
         </div>
         <p className="mb-4 text-lg font-bold text-gray-900">
-          {template.isFree ? 'Free' : `$${template.price.toFixed(2)}`}
+          {formatPrice(template.price, template.isFree, template.currency || 'INR')}
         </p>
         <div className="flex gap-2">
           <Button asChild variant="outline" className="flex-1" size="sm">

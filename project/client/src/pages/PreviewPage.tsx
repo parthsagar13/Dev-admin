@@ -8,6 +8,7 @@ import { useTemplateDownload } from '@/hooks/useTemplateDownload';
 import type { Template } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { formatPrice } from '@/lib/format';
 
 export const PreviewPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -69,7 +70,9 @@ export const PreviewPage = () => {
               {template.isFree ? (
                 <Badge variant="free">Free</Badge>
               ) : (
-                <Badge variant="premium">${template.price.toFixed(2)}</Badge>
+                <Badge variant="premium">
+                  {formatPrice(template.price, template.isFree, template.currency || 'INR')}
+                </Badge>
               )}
             </div>
           </div>

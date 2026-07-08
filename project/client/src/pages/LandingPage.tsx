@@ -47,7 +47,7 @@ export const LandingPage = () => {
   const { templates, loading } = useTemplates();
   const [search, setSearch] = useState('');
 
-  const featured = templates.slice(0, 6);
+  const featured = templates.slice(0, 20);
   const trending = [...templates].sort((a, b) => b.downloads - a.downloads).slice(0, 4);
   const recent = [...templates]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())

@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Trash2, Eye } from 'lucide-react';
+import { Plus, Trash2, Eye, Pencil } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { templateApi } from '@/services/api';
 import type { Template } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import { formatPrice } from '@/lib/format';
 
 export const AdminTemplates = () => {
   const [templates, setTemplates] = useState<Template[]>([]);
@@ -103,7 +104,9 @@ export const AdminTemplates = () => {
                     {template.isFree ? (
                       <Badge variant="free">Free</Badge>
                     ) : (
-                      <span className="font-medium">${template.price}</span>
+                      <span className="font-medium">
+                        {formatPrice(template.price, template.isFree, template.currency || 'INR')}
+                      </span>
                     )}
                   </td>
                   <td className="px-6 py-4 text-gray-600">{template.downloads}</td>
@@ -112,6 +115,11 @@ export const AdminTemplates = () => {
                       <Button asChild variant="ghost" size="icon">
                         <Link to={`/preview/${template.slug}`} target="_blank">
                           <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <Button asChild variant="ghost" size="icon">
+                        <Link to={`/admin/templates/${template._id}/edit`}>
+                          <Pencil className="h-4 w-4" />
                         </Link>
                       </Button>
                       <Button

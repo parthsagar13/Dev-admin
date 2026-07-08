@@ -51,7 +51,7 @@ export const CheckoutPage = () => {
         key: orderData.keyId,
         amount: Math.round((orderData.amount || 0) * 100),
         currency: orderData.currency || 'INR',
-        name: 'Code Market AI',
+        name: 'Code Market',
         description: template.title,
         order_id: orderData.orderId,
         prefill: { name: user.name, email: user.email },
@@ -169,11 +169,11 @@ export const CheckoutPage = () => {
               <div className="space-y-2 py-4 text-sm">
                 <div className="flex justify-between">
                   <span className="text-gray-500">Subtotal</span>
-                  <span>{template ? formatPrice(template.price, template.isFree) : '—'}</span>
+                  <span>{template ? formatPrice(template.price, template.isFree, template.currency || 'INR') : '—'}</span>
                 </div>
                 <div className="flex justify-between border-t border-gray-100 pt-2 text-lg font-bold">
                   <span>Total</span>
-                  <span>{template ? formatPrice(template.price, template.isFree) : '—'}</span>
+                  <span>{template ? formatPrice(template.price, template.isFree, template.currency || 'INR') : '—'}</span>
                 </div>
               </div>
               <Button

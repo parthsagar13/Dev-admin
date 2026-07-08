@@ -55,7 +55,7 @@ export const PurchasesPage = () => {
                   <td className="px-4 py-3 font-medium">{order.template?.title || '—'}</td>
                   <td className="px-4 py-3">
                     {order.template
-                      ? formatPrice(order.amount, order.template.isFree)
+                      ? formatPrice(order.amount, order.template.isFree, order.template.currency || 'INR')
                       : `₹${order.amount}`}
                   </td>
                   <td className="px-4 py-3 text-gray-500">

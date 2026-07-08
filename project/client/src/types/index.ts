@@ -5,6 +5,7 @@ export interface Template {
   framework: string;
   category: string;
   price: number;
+  currency?: string;
   isFree: boolean;
   thumbnailUrl: string;
   sourceZipUrl: string;
@@ -74,6 +75,7 @@ export interface OrderItem {
     thumbnailUrl: string;
     price: number;
     isFree: boolean;
+    currency?: string;
   } | null;
 }
 
@@ -88,6 +90,7 @@ export interface DownloadItem {
     category: string;
     price: number;
     isFree: boolean;
+    currency?: string;
   } | null;
   downloadCount: number;
   lastDownloadAt?: string;

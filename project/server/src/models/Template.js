@@ -7,6 +7,7 @@ const templateSchema = new mongoose.Schema(
     framework: { type: String, required: true, trim: true },
     category: { type: String, required: true, trim: true },
     price: { type: Number, required: true, min: 0, default: 0 },
+    currency: { type: String, required: true, default: 'INR', uppercase: true, trim: true },
     isFree: { type: Boolean, required: true, default: true },
     thumbnailUrl: { type: String, required: true },
     zipPath: { type: String },

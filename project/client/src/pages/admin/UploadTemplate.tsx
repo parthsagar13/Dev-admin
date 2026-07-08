@@ -24,6 +24,7 @@ const uploadSchema = z.object({
   framework: z.string().min(1, 'Framework is required'),
   category: z.string().min(1, 'Category is required'),
   price: z.coerce.number().min(0, 'Price must be 0 or greater'),
+  currency: z.string().min(1, 'Currency is required'),
   isFree: z.boolean(),
 });
 
@@ -31,6 +32,12 @@ type UploadForm = z.infer<typeof uploadSchema>;
 
 const FRAMEWORKS = ['HTML', 'React', 'Vue', 'Next.js', 'Nuxt', 'Angular', 'Svelte', 'Other'];
 const CATEGORIES = ['Landing Page', 'Portfolio', 'Dashboard', 'E-commerce', 'Blog', 'SaaS', 'Other'];
+const CURRENCIES = [
+  { code: 'INR', label: 'INR (₹) — Indian Rupee' },
+  { code: 'USD', label: 'USD ($) — US Dollar' },
+  { code: 'EUR', label: 'EUR (€) — Euro' },
+  { code: 'GBP', label: 'GBP (£) — British Pound' },
+];
 
 export const UploadTemplate = () => {
   const navigate = useNavigate();
@@ -54,6 +61,7 @@ export const UploadTemplate = () => {
       framework: '',
       category: '',
       price: 0,
+      currency: 'INR',
       isFree: true,
     },
   });
@@ -97,6 +105,7 @@ export const UploadTemplate = () => {
     formData.append('framework', data.framework);
     formData.append('category', data.category);
     formData.append('price', String(data.isFree ? 0 : data.price));
+    formData.append('currency', data.currency || 'INR');
     formData.append('isFree', String(data.isFree));
     formData.append('sourceZip', sourceZipFile);
 
@@ -176,6 +185,25 @@ export const UploadTemplate = () => {
               </div>
             </div>
 
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Currency</Label>
+                <Select defaultValue="INR" onValueChange={(v) => setValue('currency', v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select currency" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CURRENCIES.map((c) => (
+                      <SelectItem key={c.code} value={c.code}>
+                        {c.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.currency && <p className="text-sm text-red-500">{errors.currency.message}</p>}
+              </div>
+            </div>
+
             <div className="flex items-center justify-between rounded-lg border border-gray-200 p-4">
               <div>
                 <Label>Free Template</Label>
@@ -189,7 +217,7 @@ export const UploadTemplate = () => {
 
             {!isFree && (
               <div className="space-y-2">
-                <Label htmlFor="price">Price ($)</Label>
+                <Label htmlFor="price">Price</Label>
                 <Input id="price" type="number" step="0.01" min="0" {...register('price')} />
                 {errors.price && <p className="text-sm text-red-500">{errors.price.message}</p>}
               </div>

@@ -45,7 +45,7 @@ export const DownloadsPage = () => {
                   <div className="flex-1">
                     <p className="font-semibold text-gray-900">{item.template.title}</p>
                     <p className="text-sm text-gray-500">
-                      {item.template.framework} · {formatPrice(item.template.price, item.template.isFree)}
+                      {item.template.framework} · {formatPrice(item.template.price, item.template.isFree, item.template.currency || 'INR')}
                     </p>
                     <p className="mt-1 text-xs text-gray-400">
                       Purchased {new Date(item.purchasedAt).toLocaleDateString()} · Downloaded{' '}

@@ -61,7 +61,7 @@ export const SuccessPage = () => {
               {[
                 { label: 'Item', value: template.title },
                 { label: 'License', value: 'Commercial Use' },
-                { label: 'Total', value: formatPrice(template.price, template.isFree) },
+                { label: 'Total', value: formatPrice(template.price, template.isFree, template.currency || 'INR') },
               ].map((item) => (
                 <div key={item.label} className="rounded-xl bg-gray-50 p-4 text-left">
                   <p className="text-xs font-semibold uppercase text-gray-400">{item.label}</p>

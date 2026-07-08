@@ -25,6 +25,7 @@ import { AdminLogin } from '@/pages/admin/AdminLogin';
 import { AdminDashboard } from '@/pages/admin/AdminDashboard';
 import { AdminTemplates } from '@/pages/admin/AdminTemplates';
 import { UploadTemplate } from '@/pages/admin/UploadTemplate';
+import { EditTemplate } from '@/pages/admin/EditTemplate';
 import { AdminOrders } from '@/pages/admin/AdminOrders';
 import { AdminPayments } from '@/pages/admin/AdminPayments';
 import { AdminDownloads } from '@/pages/admin/AdminDownloads';
@@ -78,6 +79,7 @@ function App() {
                 <Route path="dashboard" element={<AdminDashboard />} />
                 <Route path="templates" element={<AdminTemplates />} />
                 <Route path="templates/upload" element={<UploadTemplate />} />
+                <Route path="templates/:id/edit" element={<EditTemplate />} />
                 <Route path="orders" element={<AdminOrders />} />
                 <Route path="payments" element={<AdminPayments />} />
                 <Route path="downloads" element={<AdminDownloads />} />

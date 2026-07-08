@@ -29,7 +29,7 @@ export const getTemplateBySlug = async (req, res, next) => {
 
 export const uploadTemplate = async (req, res, next) => {
   try {
-    const { title, framework, category, price, isFree } = req.body;
+    const { title, framework, category, price, isFree, currency } = req.body;
 
     if (!title || !framework || !category) {
       return res.status(400).json({ message: 'Title, framework, and category are required' });
@@ -50,6 +50,7 @@ export const uploadTemplate = async (req, res, next) => {
     const slug = generateSlug(title);
     const parsedPrice = Number(price) || 0;
     const free = isFree === 'true' || isFree === true;
+    const curr = (currency || 'INR').toString().toUpperCase().trim();
 
     const previewInput = previewZip
       ? { type: 'zip', buffer: previewZip.buffer }
@@ -79,6 +80,7 @@ export const uploadTemplate = async (req, res, next) => {
       framework: framework.trim(),
       category: category.trim(),
       price: free ? 0 : parsedPrice,
+      currency: curr,
       isFree: free,
       thumbnailUrl,
       zipPath,
@@ -95,13 +97,14 @@ export const uploadTemplate = async (req, res, next) => {
 
 export const updateTemplate = async (req, res, next) => {
   try {
-    const { title, framework, category, price, isFree } = req.body;
+    const { title, framework, category, price, isFree, currency } = req.body;
     const updates = {};
 
     if (title) updates.title = title.trim();
     if (framework) updates.framework = framework.trim();
     if (category) updates.category = category.trim();
     if (price !== undefined) updates.price = Number(price);
+    if (currency) updates.currency = currency.toString().toUpperCase().trim();
     if (isFree !== undefined) {
       updates.isFree = isFree === 'true' || isFree === true;
       if (updates.isFree) updates.price = 0;
