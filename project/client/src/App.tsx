@@ -29,6 +29,12 @@ import { AdminOrders } from '@/pages/admin/AdminOrders';
 import { AdminPayments } from '@/pages/admin/AdminPayments';
 import { AdminDownloads } from '@/pages/admin/AdminDownloads';
 import { AdminCustomers } from '@/pages/admin/AdminCustomers';
+import { AboutPage } from '@/pages/info/AboutPage';
+import { ContactPage } from '@/pages/info/ContactPage';
+import { PrivacyPolicyPage } from '@/pages/info/PrivacyPolicyPage';
+import { TermsPage } from '@/pages/info/TermsPage';
+import { RefundPolicyPage } from '@/pages/info/RefundPolicyPage';
+import { CancellationPolicyPage } from '@/pages/info/CancellationPolicyPage';
 
 function App() {
   return (
@@ -50,6 +56,13 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/refund-policy" element={<RefundPolicyPage />} />
+            <Route path="/cancellation-policy" element={<CancellationPolicyPage />} />
 
             <Route element={<UserProtectedRoute />}>
               <Route path="/dashboard" element={<UserDashboardPage />} />

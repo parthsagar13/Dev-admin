@@ -11,15 +11,15 @@ const footerLinks = {
     { label: 'UI Kits', to: '/templates' },
   ],
   company: [
-    { label: 'Developer API', to: '#' },
-    { label: 'Status', to: '#' },
-    { label: 'Support', to: '#' },
-    { label: 'Sell Your Code', to: '/admin/login' },
+    { label: 'About', to: '/about' },
+    { label: 'Contact', to: '/contact' },
+    { label: 'Support', to: '/contact' },
   ],
   legal: [
-    { label: 'Terms of Service', to: '#' },
-    { label: 'Privacy Policy', to: '#' },
-    { label: 'License Agreement', to: '#' },
+    { label: 'Terms & Conditions', to: '/terms' },
+    { label: 'Privacy Policy', to: '/privacy-policy' },
+    { label: 'Refund Policy', to: '/refund-policy' },
+    { label: 'Cancellation Policy', to: '/cancellation-policy' },
   ],
 };
 
