@@ -1,4 +1,7 @@
-import { Link } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
+import Image from 'next/image';
 import { Eye, Download, Search } from 'lucide-react';
 import type { Template } from '@/types';
 import { useTemplateDownload } from '@/hooks/useTemplateDownload';
@@ -20,11 +23,12 @@ export const TemplateCard = ({ template }: TemplateCardProps) => {
   return (
     <Card className="group overflow-hidden transition-shadow hover:shadow-md">
       <div className="relative aspect-video overflow-hidden bg-gray-100">
-        <img
+        <Image
           src={template.thumbnailUrl}
           alt={template.title}
+          width={640}
+          height={360}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-          loading="lazy"
         />
         {template.isFree ? (
           <Badge variant="free" className="absolute left-3 top-3">Free</Badge>
@@ -44,7 +48,7 @@ export const TemplateCard = ({ template }: TemplateCardProps) => {
         </p>
         <div className="flex gap-2">
           <Button asChild variant="outline" className="flex-1" size="sm">
-            <Link to={`/preview/${template.slug}`}>
+            <Link href={`/preview/${template.slug}`}>
               <Eye className="h-4 w-4" />
               Preview
             </Link>

@@ -4,7 +4,7 @@ A production-ready template marketplace with Razorpay payments, user authenticat
 
 ## Tech Stack
 
-**Frontend:** React 19, Vite, TypeScript, Tailwind CSS, shadcn/ui, React Router, Axios, React Hook Form, Zod, React Hot Toast, Razorpay Checkout
+**Frontend:** Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS v4, shadcn/ui, Axios, React Hook Form, Zod, React Hot Toast, Razorpay Checkout, Google OAuth
 
 **Backend:** Node.js, Express, MongoDB Atlas, Mongoose, JWT, bcrypt, Razorpay, Supabase Storage
 
@@ -12,7 +12,7 @@ A production-ready template marketplace with Razorpay payments, user authenticat
 
 ```
 project/
-├── client/     # React frontend (port 5173)
+├── client/     # Next.js 15 frontend (port 5173)
 └── server/     # Express API (port 5000)
 ```
 
@@ -51,8 +51,8 @@ GOOGLE_CALLBACK_URL=postmessage
 ### Client (`project/client/.env`)
 
 ```env
-VITE_API_URL=http://localhost:5000/api
-VITE_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your-google-client-id.apps.googleusercontent.com
 ```
 
 ## Setup
@@ -248,7 +248,7 @@ This project uses the **popup authorization-code flow** (`@react-oauth/google`).
 
 | Variable | Description |
 |----------|-------------|
-| `VITE_GOOGLE_CLIENT_ID` | Same OAuth Web client ID |
+| `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | Same OAuth Web client ID |
 
 ### 5. Local development
 
@@ -259,7 +259,7 @@ GOOGLE_CLIENT_SECRET=GOCSPX-your-secret
 GOOGLE_CALLBACK_URL=postmessage
 
 # Client .env
-VITE_GOOGLE_CLIENT_ID=123456789-abc.apps.googleusercontent.com
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=123456789-abc.apps.googleusercontent.com
 ```
 
 Restart both `npm run dev` processes after changing env files.
@@ -268,8 +268,8 @@ Restart both `npm run dev` processes after changing env files.
 
 1. Add production domain to **Authorized JavaScript origins** and **redirect URIs** in Google Cloud Console
 2. Set the same `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` on your backend host
-3. Set `VITE_GOOGLE_CLIENT_ID` on your frontend host (Netlify, Vercel, etc.)
-4. Rebuild the frontend after setting `VITE_GOOGLE_CLIENT_ID` (Vite embeds env at build time)
+3. Set `NEXT_PUBLIC_GOOGLE_CLIENT_ID` on your frontend host (Netlify, Vercel, etc.)
+4. Rebuild the frontend after setting `NEXT_PUBLIC_GOOGLE_CLIENT_ID`
 5. Use HTTPS in production
 
 ### Google login behavior
@@ -293,8 +293,8 @@ Restart both `npm run dev` processes after changing env files.
 
 - Base directory: `client`
 - Build: `npm run build`
-- Publish: `dist`
-- Env: `VITE_API_URL=https://your-api.com/api`
+- Uses `@netlify/plugin-nextjs` (see `client/netlify.toml`)
+- Env: `NEXT_PUBLIC_API_URL=https://your-api.com/api`
 
 ### Backend (Railway)
 

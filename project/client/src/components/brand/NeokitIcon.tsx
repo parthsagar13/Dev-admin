@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '@/lib/utils';
 import { BRAND_ICON_SRC, BRAND_NAME } from '@/lib/brand';
 

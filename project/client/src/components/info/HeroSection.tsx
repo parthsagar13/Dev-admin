@@ -1,7 +1,9 @@
+'use client';
+
 import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 export const HeroSection = ({
   eyebrow,
@@ -35,12 +37,12 @@ export const HeroSection = ({
         <div className={cn('mt-10 flex flex-col justify-center gap-3 sm:flex-row')}>
           {primaryCta && (
             <Button asChild className="h-12 bg-gray-900 px-8 text-base hover:bg-gray-800">
-              <Link to={primaryCta.to}>{primaryCta.label}</Link>
+              <Link href={primaryCta.to}>{primaryCta.label}</Link>
             </Button>
           )}
           {secondaryCta && (
             <Button asChild variant="outline" className="h-12 px-8 text-base">
-              <Link to={secondaryCta.to}>{secondaryCta.label}</Link>
+              <Link href={secondaryCta.to}>{secondaryCta.label}</Link>
             </Button>
           )}
         </div>

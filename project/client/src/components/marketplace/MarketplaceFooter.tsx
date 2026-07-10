@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
 import { Globe } from 'lucide-react';
 import { NeokitLogo } from '@/components/brand/NeokitLogo';
 import { BRAND_NAME } from '@/lib/brand';
@@ -50,7 +52,7 @@ export const MarketplaceFooter = () => (
             <ul className="space-y-2">
               {links.map((link) => (
                 <li key={link.label}>
-                  <Link to={link.to} className="text-sm text-gray-500 transition-colors hover:text-gray-900">
+                  <Link href={link.to} className="text-sm text-gray-500 transition-colors hover:text-gray-900">
                     {link.label}
                   </Link>
                 </li>

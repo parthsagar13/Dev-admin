@@ -1,4 +1,7 @@
-import { Link } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
+import Image from 'next/image';
 import { Code2, Download, Star } from 'lucide-react';
 import type { Template } from '@/types';
 import { formatDownloads, formatPrice } from '@/lib/format';
@@ -22,16 +25,18 @@ export const TemplateMarketCard = ({
   if (variant === 'compact') {
     return (
       <Link
-        to={`/templates/${template.slug}`}
+        href={`/templates/${template.slug}`}
         className={cn(
           'flex items-center gap-4 rounded-xl border border-gray-100 bg-white p-3 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md',
           className
         )}
       >
         <div className="h-16 w-24 shrink-0 overflow-hidden rounded-lg border border-gray-100 bg-gray-50">
-          <img
+          <Image
             src={template.thumbnailUrl}
             alt={template.title}
+            width={96}
+            height={64}
             className="h-full w-full bg-white object-contain"
           />
         </div>
@@ -61,14 +66,15 @@ export const TemplateMarketCard = ({
       )}
     >
       <Link
-        to={`/templates/${template.slug}`}
+        href={`/templates/${template.slug}`}
         className="relative block aspect-video shrink-0 overflow-hidden bg-gray-100"
       >
-        <img
+        <Image
           src={template.thumbnailUrl}
           alt={template.title}
+          width={640}
+          height={360}
           className="h-full w-full bg-white object-contain transition-transform duration-500 group-hover:scale-[1.01]"
-          loading="lazy"
         />
         <span className="absolute bottom-3 left-3 rounded-md bg-white/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-gray-700 backdrop-blur">
           {template.framework}
@@ -81,7 +87,7 @@ export const TemplateMarketCard = ({
         </p>
 
         <div className="mt-1 flex items-start justify-between gap-2">
-          <Link to={`/templates/${template.slug}`} className="min-w-0 flex-1">
+          <Link href={`/templates/${template.slug}`} className="min-w-0 flex-1">
             <h3 className="line-clamp-1 text-base font-bold text-gray-900 transition-colors group-hover:text-blue-600">
               {template.title}
             </h3>

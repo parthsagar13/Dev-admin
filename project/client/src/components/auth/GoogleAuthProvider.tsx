@@ -1,3 +1,5 @@
+'use client';
+
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import type { ReactNode } from 'react';
 import { GOOGLE_CLIENT_ID } from '@/lib/googleAuth';

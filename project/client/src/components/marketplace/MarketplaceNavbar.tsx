@@ -1,4 +1,7 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { Search, ShoppingCart, User } from 'lucide-react';
 import { NeokitLogo } from '@/components/brand/NeokitLogo';
 import { Input } from '@/components/ui/input';
@@ -24,24 +27,24 @@ export const MarketplaceNavbar = ({
   onSearchChange,
   showSearch = true,
 }: MarketplaceNavbarProps) => {
-  const location = useLocation();
-  const navigate = useNavigate();
+  const pathname = usePathname();
+  const router = useRouter();
   const { isAuthenticated: isAdmin } = useAuth();
   const { isAuthenticated: isUser } = useUserAuth();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (search.trim()) {
-      navigate(`/templates?q=${encodeURIComponent(search.trim())}`);
+      router.push(`/templates?q=${encodeURIComponent(search.trim())}`);
     } else {
-      navigate('/templates');
+      router.push('/templates');
     }
   };
 
   return (
     <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/95 backdrop-blur-md">
       <div className={cn(marketplaceContainer, 'flex h-16 items-center gap-6')}>
-        <Link to="/" className="flex shrink-0 items-center">
+        <Link href="/" className="flex shrink-0 items-center">
           <NeokitLogo size="lg" useWordmarkImage />
         </Link>
 
@@ -49,10 +52,10 @@ export const MarketplaceNavbar = ({
           {navLinks.map((link) => (
             <Link
               key={link.href}
-              to={link.href}
+              href={link.href}
               className={cn(
                 'text-sm font-medium transition-colors hover:text-blue-600',
-                location.pathname.startsWith('/templates') && link.label === 'Templates'
+                pathname.startsWith('/templates') && link.label === 'Templates'
                   ? 'border-b-2 border-gray-900 pb-0.5 text-gray-900'
                   : 'text-gray-600'
               )}
@@ -78,13 +81,13 @@ export const MarketplaceNavbar = ({
 
         <div className="ml-auto flex items-center gap-2">
           <Link
-            to="/templates"
+            href="/templates"
             className="flex h-10 w-10 items-center justify-center rounded-full text-gray-600 transition-colors hover:bg-gray-100"
           >
             <ShoppingCart className="h-5 w-5" />
           </Link>
           <Link
-            to={isUser ? '/dashboard' : '/login'}
+            href={isUser ? '/dashboard' : '/login'}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition-colors hover:bg-gray-200"
             title={isUser ? 'My Dashboard' : 'Login'}
           >
@@ -92,7 +95,7 @@ export const MarketplaceNavbar = ({
           </Link>
           {isAdmin && (
             <Link
-              to="/admin/dashboard"
+              href="/admin/dashboard"
               className="hidden text-xs text-gray-500 hover:text-gray-900 sm:block"
             >
               Admin

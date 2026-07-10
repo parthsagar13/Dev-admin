@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
 import { NeokitLogo } from '@/components/brand/NeokitLogo';
 import { Button } from '@/components/ui/button';
 
@@ -6,7 +8,7 @@ export const Navbar = () => {
   return (
     <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link to="/">
+        <Link href="/">
           <NeokitLogo size="md" useWordmarkImage />
         </Link>
         <nav className="flex items-center gap-4">
@@ -14,7 +16,7 @@ export const Navbar = () => {
             Templates
           </a>
           <Button asChild variant="outline" size="sm">
-            <Link to="/admin/login">Admin</Link>
+            <Link href="/admin/login">Admin</Link>
           </Button>
         </nav>
       </div>

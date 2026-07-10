@@ -1,9 +1,13 @@
-import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
+'use client';
+
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, FileStack, LogOut, ShoppingBag, CreditCard, Download, Users } from 'lucide-react';
 import { NeokitLogo } from '@/components/brand/NeokitLogo';
 import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import type { ReactNode } from 'react';
 
 const navItems = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
@@ -15,13 +19,13 @@ const navItems = [
 ];
 
 export const AdminSidebar = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
+  const pathname = usePathname();
+  const router = useRouter();
   const { logout, admin } = useAuth();
 
   const handleLogout = () => {
     logout();
-    navigate('/admin/login');
+    router.push('/admin/login');
   };
 
   return (
@@ -33,11 +37,11 @@ export const AdminSidebar = () => {
       <nav className="flex-1 space-y-1 p-4">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const active = location.pathname.startsWith(item.href);
+          const active = pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}
-              to={item.href}
+              href={item.href}
               className={cn(
                 'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors',
                 active ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'
@@ -61,13 +65,11 @@ export const AdminSidebar = () => {
   );
 };
 
-export const AdminLayout = () => {
+export const AdminLayout = ({ children }: { children: ReactNode }) => {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar />
-      <main className="flex-1 overflow-auto p-8">
-        <Outlet />
-      </main>
+      <main className="flex-1 overflow-auto p-8">{children}</main>
     </div>
   );
 };

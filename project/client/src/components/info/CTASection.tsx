@@ -1,5 +1,7 @@
+'use client';
+
 import { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 export const CTASection = ({
@@ -23,7 +25,7 @@ export const CTASection = ({
           <p className="mt-3 max-w-2xl text-white/80">{description}</p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
             <Button asChild className="h-12 bg-white px-8 text-base text-gray-900 hover:bg-white/90">
-              <Link to={primary.to}>{primary.label}</Link>
+              <Link href={primary.to}>{primary.label}</Link>
             </Button>
             {secondary && (
               <Button
@@ -31,7 +33,7 @@ export const CTASection = ({
                 variant="outline"
                 className="h-12 border-white/30 bg-transparent px-8 text-base text-white hover:bg-white/10"
               >
-                <Link to={secondary.to}>{secondary.label}</Link>
+                <Link href={secondary.to}>{secondary.label}</Link>
               </Button>
             )}
           </div>

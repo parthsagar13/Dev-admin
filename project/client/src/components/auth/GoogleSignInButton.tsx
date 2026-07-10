@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import toast from 'react-hot-toast';

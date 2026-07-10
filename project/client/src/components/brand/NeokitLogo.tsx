@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '@/lib/utils';
 import { BRAND_LOGO_SRC, BRAND_NAME } from '@/lib/brand';
 import { NeokitIcon } from './NeokitIcon';

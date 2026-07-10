@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from 'react';
 import { templateApi } from '@/services/api';
 import type { Template } from '@/types';
