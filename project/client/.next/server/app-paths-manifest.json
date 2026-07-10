@@ -1,8 +1,0 @@
-{
-  "/login/page": "app/login/page.js",
-  "/page": "app/page.js",
-  "/templates/[slug]/page": "app/templates/[slug]/page.js",
-  "/preview/[slug]/page": "app/preview/[slug]/page.js",
-  "/dashboard/page": "app/dashboard/page.js",
-  "/dashboard/profile/page": "app/dashboard/profile/page.js"
-}
