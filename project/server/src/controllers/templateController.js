@@ -1,7 +1,7 @@
 import { Template } from '../models/Template.js';
 import { generateSlug } from '../utils/slug.js';
 import { processTemplateUpload } from '../services/zipService.js';
-import { storageService } from '../services/storage/storage.service.ts';
+import { storageService } from '../services/storage/storage.service.js';
 
 const normalizeRelativePath = (filename) =>
   filename.replace(/\\/g, '/').replace(/^\/+/, '');

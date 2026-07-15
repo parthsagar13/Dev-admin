@@ -1,4 +1,4 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -15,9 +15,6 @@ const MAX_FILE_BYTES = 50 * 1024 * 1024;
 const RETRYABLE = /bad gateway|timeout|429|502|503|504|econnreset|fetch failed|network/i;
 
 class StorageService {
-  private client: SupabaseClient;
-  private bucket: string;
-
   constructor() {
     const url = process.env.SUPABASE_URL;
     const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -30,20 +27,20 @@ class StorageService {
     });
   }
 
-  private normalizeSupabaseUrl(url: string): string {
+  normalizeSupabaseUrl(url) {
     return url.replace(/\/rest\/v1\/?$/, '').replace(/\/$/, '');
   }
 
-  private sanitizePath(storagePath: string): string {
+  sanitizePath(storagePath) {
     return storagePath.replace(/^\/+/, '').replace(/\/+/g, '/');
   }
 
-  getPublicUrl(storagePath: string): string {
+  getPublicUrl(storagePath) {
     const { data } = this.client.storage.from(this.bucket).getPublicUrl(this.sanitizePath(storagePath));
     return data.publicUrl;
   }
 
-  async createSignedUrl(storagePath: string, expiresInSeconds = 600): Promise<string> {
+  async createSignedUrl(storagePath, expiresInSeconds = 600) {
     const objectPath = this.sanitizePath(storagePath);
     const { data, error } = await this.client.storage
       .from(this.bucket)
@@ -56,7 +53,7 @@ class StorageService {
     return data.signedUrl;
   }
 
-  private async uploadOnce(storagePath: string, buffer: Buffer, contentType: string): Promise<void> {
+  async uploadOnce(storagePath, buffer, contentType) {
     const objectPath = this.sanitizePath(storagePath);
     const { error } = await this.client.storage.from(this.bucket).upload(objectPath, buffer, {
       contentType,
@@ -65,8 +62,8 @@ class StorageService {
     if (error) throw new Error(`Storage upload failed: ${error.message}`);
   }
 
-  private async upload(storagePath: string, buffer: Buffer, contentType: string): Promise<void> {
-    let lastError: Error | null = null;
+  async upload(storagePath, buffer, contentType) {
+    let lastError = null;
 
     for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
       try {
@@ -83,14 +80,14 @@ class StorageService {
     throw lastError ?? new Error('Storage upload failed');
   }
 
-  async downloadFile(storagePath: string): Promise<Buffer> {
+  async downloadFile(storagePath) {
     const objectPath = this.sanitizePath(storagePath);
     const { data, error } = await this.client.storage.from(this.bucket).download(objectPath);
     if (error || !data) throw new Error(`Storage file not found: ${objectPath}`);
     return Buffer.from(await data.arrayBuffer());
   }
 
-  private buildPreviewCandidates(slug: string, requestedPath: string, indexPath: string): string[] {
+  buildPreviewCandidates(slug, requestedPath, indexPath) {
     const base = `preview/${slug}`;
 
     if (!requestedPath) {
@@ -111,11 +108,7 @@ class StorageService {
     return candidates;
   }
 
-  async downloadPreviewFile(
-    slug: string,
-    requestedPath: string,
-    indexPath: string
-  ): Promise<{ buffer: Buffer; storagePath: string }> {
+  async downloadPreviewFile(slug, requestedPath, indexPath) {
     const candidates = this.buildPreviewCandidates(slug, requestedPath, indexPath);
 
     for (const storagePath of candidates) {
@@ -137,8 +130,8 @@ class StorageService {
     throw new Error(`Storage file not found: preview/${slug}/${clean || indexPath}`);
   }
 
-  async uploadThumbnailBuffer(slug: string, buffer: Buffer, mimeType: string): Promise<string> {
-    const extMap: Record<string, string> = {
+  async uploadThumbnailBuffer(slug, buffer, mimeType) {
+    const extMap = {
       'image/jpeg': '.jpg',
       'image/jpg': '.jpg',
       'image/png': '.png',
@@ -150,7 +143,7 @@ class StorageService {
     return this.getPublicUrl(storagePath);
   }
 
-  async findStoredIndexPath(slug: string): Promise<string | null> {
+  async findStoredIndexPath(slug) {
     const files = await this.listAllFiles(`preview/${slug}`);
     const relativePaths = files
       .filter((file) => {
@@ -162,13 +155,13 @@ class StorageService {
     return pickBestIndexPath(relativePaths);
   }
 
-  async uploadZip(slug: string, buffer: Buffer): Promise<string> {
+  async uploadZip(slug, buffer) {
     const storagePath = `source/${slug}.zip`;
     await this.upload(storagePath, buffer, 'application/zip');
     return this.getPublicUrl(storagePath);
   }
 
-  async uploadPreview(slug: string, extractDir: string): Promise<{ basePath: string }> {
+  async uploadPreview(slug, extractDir) {
     const basePath = `preview/${slug}`;
     const files = await this.collectFiles(extractDir, basePath, '');
 
@@ -183,7 +176,7 @@ class StorageService {
     return { basePath };
   }
 
-  async uploadThumbnail(slug: string, localFilePath: string): Promise<string> {
+  async uploadThumbnail(slug, localFilePath) {
     const ext = path.extname(localFilePath).toLowerCase() || '.png';
     const storagePath = `thumbnail/${slug}${ext}`;
     const buffer = await fs.readFile(localFilePath);
@@ -192,14 +185,14 @@ class StorageService {
     return this.getPublicUrl(storagePath);
   }
 
-  async uploadDefaultThumbnail(slug: string): Promise<string> {
+  async uploadDefaultThumbnail(slug) {
     const storagePath = `thumbnail/${slug}.svg`;
     const buffer = await fs.readFile(PLACEHOLDER_PATH);
     await this.upload(storagePath, buffer, 'image/svg+xml');
     return this.getPublicUrl(storagePath);
   }
 
-  async deleteFiles(slug: string): Promise<void> {
+  async deleteFiles(slug) {
     const paths = [
       `source/${slug}.zip`,
       ...(await this.listAllFiles(`preview/${slug}`)),
@@ -216,7 +209,7 @@ class StorageService {
     }
   }
 
-  private async listThumbnailFiles(slug: string): Promise<string[]> {
+  async listThumbnailFiles(slug) {
     const { data, error } = await this.client.storage.from(this.bucket).list('thumbnail', {
       limit: 1000,
     });
@@ -226,7 +219,7 @@ class StorageService {
       .map((item) => `thumbnail/${item.name}`);
   }
 
-  private async listAllFiles(folder: string): Promise<string[]> {
+  async listAllFiles(folder) {
     const { data, error } = await this.client.storage.from(this.bucket).list(folder, {
       limit: 1000,
     });
@@ -235,7 +228,7 @@ class StorageService {
       throw new Error(`Storage list failed: ${error.message}`);
     }
 
-    const files: string[] = [];
+    const files = [];
     for (const item of data || []) {
       const itemPath = `${folder}/${item.name}`;
       if (item.id === null) {
@@ -247,12 +240,8 @@ class StorageService {
     return files;
   }
 
-  private async collectFiles(
-    localDir: string,
-    storagePrefix: string,
-    relativePrefix: string
-  ): Promise<Array<{ storagePath: string; localPath: string }>> {
-    const files: Array<{ storagePath: string; localPath: string }> = [];
+  async collectFiles(localDir, storagePrefix, relativePrefix) {
+    const files = [];
     const entries = await fs.readdir(localDir, { withFileTypes: true });
 
     for (const entry of entries) {
@@ -273,11 +262,7 @@ class StorageService {
     return files;
   }
 
-  private async runPool<T>(
-    items: T[],
-    concurrency: number,
-    worker: (item: T) => Promise<void>
-  ): Promise<void> {
+  async runPool(items, concurrency, worker) {
     let index = 0;
 
     const runWorker = async () => {
@@ -291,4 +276,17 @@ class StorageService {
   }
 }
 
-export const storageService = new StorageService();
+let _instance = null;
+
+export const storageService = new Proxy(
+  {},
+  {
+    get(_target, prop) {
+      if (!_instance) {
+        _instance = new StorageService();
+      }
+      const value = _instance[prop];
+      return typeof value === 'function' ? value.bind(_instance) : value;
+    },
+  }
+);

@@ -1,6 +1,6 @@
 import { Download } from '../models/Download.js';
 import { Template } from '../models/Template.js';
-import { storageService } from '../services/storage/storage.service.ts';
+import { storageService } from '../services/storage/storage.service.js';
 import {
   hasPurchaseAccess,
   getTemplateZipPath,

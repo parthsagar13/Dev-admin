@@ -3,7 +3,7 @@ import path from 'path';
 import os from 'os';
 import unzipper from 'unzipper';
 import { createReadStream } from 'fs';
-import { storageService } from './storage/storage.service.ts';
+import { storageService } from './storage/storage.service.js';
 import { findIndexHtml, findPreviewImage } from '../utils/fileUtils.js';
 
 const buildPreviewUrl = (slug) => {

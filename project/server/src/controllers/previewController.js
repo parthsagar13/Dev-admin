@@ -1,5 +1,5 @@
 import { Template } from '../models/Template.js';
-import { storageService } from '../services/storage/storage.service.ts';
+import { storageService } from '../services/storage/storage.service.js';
 import { getContentType } from '../utils/fileUtils.js';
 import path from 'path';
 import crypto from 'crypto';
